@@ -3,28 +3,38 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دستیار Text2SQL</title>
+  <meta name="theme-color" content="#080b16">
+  <title>Text2SQL - SnappPay</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <main class="shell">
-    <header>
-      <div>
-        <p class="eyebrow">COMMERCIAL ANALYTICS</p>
-        <h1>دستیار Text2SQL</h1>
-        <p class="subtitle">نیاز تحلیلی‌تان را بنویسید؛ SQL شفاف و قابل ممیزی تحویل بگیرید.</p>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">⌁</div><div><strong>Text2SQL</strong><span>SnappPay</span></div></div>
+      <button class="new-chat" id="new-chat"><span>＋</span> گفت‌وگوی جدید</button>
+      <nav class="nav-list" aria-label="ناوبری">
+        <p class="nav-label">فضای کاری</p>
+        <button class="nav-item active"><span>◈</span> دستیار کوئری</button>
+        <button class="nav-item" id="examples-nav"><span>✦</span> نمونه درخواست‌ها</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="knowledge-card"><div class="pulse-dot"></div><div><strong>دانش Commercial</strong><span>قواعد سازمانی فعال است</span></div></div>
+        <div class="sidebar-footer"><span>نسخه ۰.۲</span><span class="offline-badge">● فقط مرورگر</span></div>
       </div>
-      <span id="status" class="status">در حال بررسی</span>
-    </header>
-    <section class="notice"><strong>حالت امن فعال است</strong><span>این نسخه فقط کوئری تولید می‌کند و اجرای دیتابیس غیرفعال است.</span></section>
-    <section id="conversation" class="conversation">
-      <article class="message assistant">سلام. برای شروع، نوع گزارش و بازهٔ زمانی را بنویسید؛ مثلاً «فروش ماهانه از 2026-01-01 تا 2026-02-01».</article>
-    </section>
-    <form id="chat-form" class="composer">
-      <textarea id="message" rows="3" required placeholder="مثلاً: کاربران فعال ماهانه از 2026-01-01 تا 2026-04-01 را به تفکیک ورتیکال بده"></textarea>
-      <button type="submit">تولید کوئری</button>
-    </form>
-  </main>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar"><div class="mobile-brand"><div class="brand-mark">⌁</div><strong>Text2SQL - SnappPay</strong></div><div class="topbar-actions"><span class="secure-label">⌁ اجرای دیتابیس غیرفعال</span><button class="icon-button" id="theme-hint" aria-label="وضعیت برنامه">•••</button></div></header>
+      <div class="workspace-grid">
+        <section class="chat-pane">
+          <div class="chat-header"><div><p class="eyebrow">COMMERCIAL ANALYTICS / AI WORKSPACE</p><h1>چه گزارشی می‌خواهی بسازیم؟</h1><p class="chat-subtitle">نیازت را با زبان طبیعی بنویس. من آن را به یک کوئری دقیق و قابل کپی تبدیل می‌کنم.</p></div></div>
+          <div class="conversation" id="conversation"><article class="welcome-card"><div class="welcome-icon">✦</div><div><h2>سلام، تحلیلگر</h2><p>من بر اساس راهنمای کوئری Commercial کار می‌کنم و قبل از تحویل، فرضیات و فیلترهای استفاده‌شده را شفاف می‌کنم.</p><div class="suggestion-row"><button class="suggestion" data-prompt="فروش ماهانه از 2026-01-01 تا 2026-04-01 به تفکیک ورتیکال">فروش ماهانه</button><button class="suggestion" data-prompt="کاربران فعال ماهانه از 2026-01-01 تا 2026-04-01">کاربران فعال</button><button class="suggestion" data-prompt="وضعیت مرچنت‌ها به تفکیک ورتیکال و دسته">وضعیت مرچنت‌ها</button></div></div></article></div>
+          <form class="composer" id="chat-form"><div class="composer-input"><span class="input-icon">⌘</span><textarea id="message" rows="1" required placeholder="درخواست تحلیلی‌ات را اینجا بنویس..." aria-label="درخواست تحلیلی"></textarea><span class="shortcut">Enter ↵</span></div><button class="send-button" type="submit" aria-label="تولید کوئری"><span>↗</span></button><p class="composer-note">پاسخ‌ها بر اساس دانش Commercial تولید می‌شوند · اجرای خودکار انجام نمی‌شود</p></form>
+        </section>
+        <aside class="output-pane" id="output-pane"><div class="output-header"><div><p class="eyebrow">QUERY OUTPUT</p><h2>خروجی کوئری</h2></div><span class="live-pill"><i></i> آماده</span></div><div id="output-empty" class="output-empty"><div class="empty-grid"></div><div class="empty-icon">⌘</div><h3>کوئری اینجا ظاهر می‌شود</h3><p>درخواستت را در چت بنویس تا SQL، فرضیات و کنترل‌های پیشنهادی را ببینی.</p></div><div id="output-content" class="output-content hidden"><div class="query-title-row"><div><span class="result-kicker">GENERATED QUERY</span><h3 id="query-title"></h3></div><button class="copy-main" id="copy-main">کپی SQL <span>⌘C</span></button></div><pre id="query-code"></pre><div class="metadata-block"><div class="meta-heading"><span>فرضیات و کنترل‌ها</span><span class="meta-count" id="meta-count"></span></div><ul id="assumptions"></ul></div></div><div class="output-footer"><span>● بدون اتصال به دیتابیس</span><button id="clear-output">پاک کردن خروجی</button></div></aside>
+      </div>
+    </main>
+  </div>
   <script src="/app.js"></script>
 </body>
 </html>
