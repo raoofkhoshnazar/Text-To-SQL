@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080b16">
   <title>Text2SQL - SnappPay</title>
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
   <div class="app-shell">
@@ -24,7 +24,7 @@
     </aside>
 
     <main class="workspace">
-      <header class="topbar"><div class="mobile-brand"><div class="brand-mark">⌁</div><strong>Text2SQL - SnappPay</strong></div><div class="topbar-actions"><span class="secure-label">⌁ اجرای دیتابیس غیرفعال</span><button class="icon-button" id="theme-hint" aria-label="وضعیت برنامه">•••</button></div></header>
+      <header class="topbar"><div class="mobile-brand"><div class="brand-mark">⌁</div><strong>Text2SQL - SnappPay</strong></div><div class="topbar-actions"><span class="secure-label">⌁ اجرای دیتابیس غیرفعال</span><button class="icon-button" id="settings-button" aria-label="تنظیمات اتصال مدل">⚙</button></div></header>
       <div class="workspace-grid">
         <section class="chat-pane">
           <div class="chat-header"><div><p class="eyebrow">COMMERCIAL ANALYTICS / AI WORKSPACE</p><h1>چه گزارشی می‌خواهی بسازیم؟</h1><p class="chat-subtitle">نیازت را با زبان طبیعی بنویس. من آن را به یک کوئری دقیق و قابل کپی تبدیل می‌کنم.</p></div></div>
@@ -35,6 +35,7 @@
       </div>
     </main>
   </div>
-  <script src="/app.js"></script>
+  <div class="settings-backdrop hidden" id="settings-backdrop"><section class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title"><button class="close-settings" id="close-settings" aria-label="بستن">×</button><p class="eyebrow">MODEL CONNECTION</p><h2 id="settings-title">اتصال به مدل زبانی</h2><p class="settings-help">تنظیمات فقط در مرورگر شما ذخیره می‌شود. برای APIهای OpenAI-compatible از آدرس پایهٔ سرویس استفاده کنید.</p><label>Base URL<input id="api-base" type="url" placeholder="https://api.example.com/v1"></label><label>API Key<input id="api-key" type="password" placeholder="کلید در مرورگر ذخیره می‌شود"></label><label>Model<input id="api-model" type="text" placeholder="model-name"></label><div class="settings-actions"><button class="secondary-button" id="test-api" type="button">تست اتصال</button><button class="primary-button" id="save-api" type="button">ذخیره تنظیمات</button></div><p class="api-status" id="api-status"></p></section></div>
+  <script src="./app.js"></script>
 </body>
 </html>

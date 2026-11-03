@@ -9,6 +9,10 @@ const assumptionsList = document.querySelector('#assumptions');
 const metaCount = document.querySelector('#meta-count');
 const copyMain = document.querySelector('#copy-main');
 let currentSql = '';
+let knowledgeGuide = '';
+const apiConfig = JSON.parse(localStorage.getItem('text2sql-api') || '{}');
+
+fetch('./knowledge/commercial_database_query_guide.md').then((response) => response.ok ? response.text() : '').then((text) => { knowledgeGuide = text; }).catch(() => {});
 
 const knowledge = {
   source: 'commercial_database_query_guide.md',
@@ -21,6 +25,42 @@ const knowledge = {
     'برای سفارش uniqExact(order_id) و برای کاربر uniqExact(wallet_id) استفاده می‌شود.',
   ],
 };
+
+async function callConfiguredModel(message) {
+  if (!apiConfig.baseUrl || !apiConfig.apiKey || !apiConfig.model) return null;
+  const baseUrl = apiConfig.baseUrl.replace(/\/$/, '');
+  const response = await fetch(`${baseUrl}/chat/completions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiConfig.apiKey}` },
+    body: JSON.stringify({
+      model: apiConfig.model,
+      temperature: 0.1,
+      messages: [
+        { role: 'system', content: `تو دستیار Text2SQL سازمانی هستی. فقط بر اساس راهنمای زیر پاسخ بده. خروجی را JSON معتبر با فیلدهای title، sql و assumptions بده. SQL باید فقط SELECT یا CTE باشد و هرگز دستور تغییر داده تولید نکن. اگر نیاز مبهم است sql را خالی بگذار و سؤال تکمیلی در assumptions بنویس.\n\n${knowledgeGuide}` },
+        { role: 'user', content: message },
+      ],
+    }),
+  });
+  if (!response.ok) throw new Error(`model request failed: ${response.status}`);
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content || '';
+  const clean = content.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+  const result = JSON.parse(clean);
+  if (typeof result.sql !== 'string' || !Array.isArray(result.assumptions)) throw new Error('invalid model response');
+  return result;
+}
+
+function setApiStatus(text, error = false) {
+  const element = document.querySelector('#api-status');
+  element.textContent = text;
+  element.classList.toggle('error', error);
+}
+
+function loadApiForm() {
+  document.querySelector('#api-base').value = apiConfig.baseUrl || '';
+  document.querySelector('#api-key').value = apiConfig.apiKey || '';
+  document.querySelector('#api-model').value = apiConfig.model || '';
+}
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>\"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;' })[character]);
@@ -183,17 +223,44 @@ document.querySelector('#clear-output').addEventListener('click', () => { curren
 document.querySelector('#new-chat').addEventListener('click', () => { conversation.innerHTML = ''; currentSql = ''; outputEmpty.classList.remove('hidden'); outputContent.classList.add('hidden'); input.focus(); });
 document.querySelectorAll('.suggestion').forEach((button) => button.addEventListener('click', () => { input.value = button.dataset.prompt; input.focus(); }));
 document.querySelector('#examples-nav').addEventListener('click', () => { document.querySelector('.suggestion').scrollIntoView({ behavior: 'smooth' }); });
-document.querySelector('#theme-hint').title = `دانش فعال: ${knowledge.source}`;
+document.querySelector('#settings-button').addEventListener('click', () => { loadApiForm(); document.querySelector('#settings-backdrop').classList.remove('hidden'); });
+document.querySelector('#close-settings').addEventListener('click', () => document.querySelector('#settings-backdrop').classList.add('hidden'));
+document.querySelector('#settings-backdrop').addEventListener('click', (event) => { if (event.target.id === 'settings-backdrop') event.currentTarget.classList.add('hidden'); });
+document.querySelector('#save-api').addEventListener('click', () => {
+  apiConfig.baseUrl = document.querySelector('#api-base').value.trim();
+  apiConfig.apiKey = document.querySelector('#api-key').value.trim();
+  apiConfig.model = document.querySelector('#api-model').value.trim();
+  localStorage.setItem('text2sql-api', JSON.stringify(apiConfig));
+  setApiStatus('تنظیمات در همین مرورگر ذخیره شد.');
+});
+document.querySelector('#test-api').addEventListener('click', async () => {
+  try { await callConfiguredModel('یک پاسخ کوتاه برای تست اتصال بده.'); setApiStatus('اتصال موفق بود.'); }
+  catch (error) { setApiStatus(`اتصال ناموفق: ${error.message}`, true); }
+});
+loadApiForm();
 
-form.addEventListener('submit', (event) => {
+form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const message = input.value.trim();
   if (!message) return;
   appendUserMessage(message);
   input.value = '';
-  const result = generateQuery(message);
-  showOutput(result);
-  appendAssistantMessage(result);
+  const button = form.querySelector('.send-button');
+  button.disabled = true;
+  button.style.opacity = '.55';
+  try {
+    const result = await callConfiguredModel(message) || generateQuery(message);
+    showOutput(result);
+    appendAssistantMessage(result);
+  } catch (error) {
+    const fallback = generateQuery(message);
+    fallback.assumptions.unshift(`مدل تنظیم‌شده پاسخ نداد؛ خروجی محلی استفاده شد (${error.message}).`);
+    showOutput(fallback);
+    appendAssistantMessage(fallback);
+  } finally {
+    button.disabled = false;
+    button.style.opacity = '';
+  }
 });
 
 input.addEventListener('keydown', (event) => {
