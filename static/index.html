@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>دستیار Text2SQL</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <p class="eyebrow">COMMERCIAL ANALYTICS</p>
+        <h1>دستیار Text2SQL</h1>
+        <p class="subtitle">نیاز تحلیلی‌تان را بنویسید؛ SQL شفاف و قابل ممیزی تحویل بگیرید.</p>
+      </div>
+      <span id="status" class="status">در حال بررسی</span>
+    </header>
+    <section class="notice"><strong>حالت امن فعال است</strong><span>این نسخه فقط کوئری تولید می‌کند و اجرای دیتابیس غیرفعال است.</span></section>
+    <section id="conversation" class="conversation">
+      <article class="message assistant">سلام. برای شروع، نوع گزارش و بازهٔ زمانی را بنویسید؛ مثلاً «فروش ماهانه از 2026-01-01 تا 2026-02-01».</article>
+    </section>
+    <form id="chat-form" class="composer">
+      <textarea id="message" rows="3" required placeholder="مثلاً: کاربران فعال ماهانه از 2026-01-01 تا 2026-04-01 را به تفکیک ورتیکال بده"></textarea>
+      <button type="submit">تولید کوئری</button>
+    </form>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
